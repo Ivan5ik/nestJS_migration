@@ -11,11 +11,4 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
     });
   }
-
-  async validate(payload: any) {
-    // Тут ви можете здійснити логіку перевірки та валідації JWT-токена
-    // Поверніть об'єкт, який буде доступний у `request.user` у вашому гварді або контролері
-
-    return { userId: payload.sub, username: payload.username };
-  }
 }
