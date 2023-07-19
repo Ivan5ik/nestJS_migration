@@ -16,7 +16,7 @@ export class UserService {
   ) {}
 
   async getUserById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne(id);
+    const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -45,7 +45,7 @@ export class UserService {
 
   async loginUser(body: LoginUserDto): Promise<string> {
     const { email, password } = body;
-    const user = await this.userRepository.findOne({ email });
+    const user = await this.userRepository.findOne({ where: { email } });
     console.log('userRRR', user);
     if (!user) {
       throw new HttpException(
