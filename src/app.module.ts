@@ -5,10 +5,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { typeOrmConfig } from './database/typeOrmConfig';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({ synchronize: false }),
+    TypeOrmModule.forRoot(typeOrmConfig),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret:
