@@ -1,6 +1,7 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 import { User } from './user.model';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,49 +16,47 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getUserById(id: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id } });
+  async findOne(
+    column: 'id' | 'email',
+    value: string,
+    needChech: boolean = true,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { [column]: value },
+    });
 
-    if (!user) {
+    if (!user && needChech) {
       throw new NotFoundException('User not found');
     }
-
-    delete user.password;
 
     return user;
   }
 
-  async createUser(body: CreateUserDto): Promise<void> {
-    const user = new User();
-    user.nick_name = body.nickName;
-    user.email = body.email;
-    user.password = body.password;
-    user.gender = body.gender;
+  async createUser(body: CreateUserDto): Promise<User> {
+    if (body.password) {
+      const hash = await bcrypt.hash(body.password, 10);
+      body.password = hash;
+    }
 
-    const createdUser = await this.userRepository.save(user);
+    const createdUser = await this.userRepository.save(body);
 
     if (!createdUser) {
       throw new NotFoundException('User no create');
-    } else {
-      throw new NotFoundException('Successes user');
     }
+    return createdUser;
   }
 
   async loginUser(body: LoginUserDto): Promise<string> {
     const { email, password } = body;
-    const user = await this.userRepository.findOne({ where: { email } });
-    console.log('userRRR', user);
-    if (!user) {
-      throw new HttpException(
-        {
-          status: 401,
-          error: 'User not found',
-        },
-        401,
-      );
-    }
+    const user = await this.findOne('email', email);
 
-    if (user.password !== password) {
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    console.log('userRRR', user);
+
+    // const { password, ...other } = user;
+
+    if (!isMatch) {
       throw new HttpException(
         {
           status: 401,
@@ -66,7 +65,7 @@ export class UserService {
         401,
       );
     }
-    const payload = { user };
+    const payload = { user }; //todo
 
     return this.jwtService.sign(payload, {
       secret:

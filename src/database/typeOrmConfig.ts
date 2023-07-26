@@ -1,7 +1,7 @@
-import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import 'dotenv/config'; // <- this line is the important
+import { DataSource, DataSourceOptions } from 'typeorm';
 
-const config: TypeOrmModuleOptions = {
+export const config: DataSourceOptions = {
   type: 'postgres',
   host: process.env.DB_HOST,
   port: parseInt(process.env.DB_PORT, 10),
@@ -18,4 +18,6 @@ const config: TypeOrmModuleOptions = {
   migrationsRun: !process.env.DB_MIGRATIONS_RUN,
   migrationsTableName: process.env.DB_MIGRATIONS_TABLE_NAME,
 };
-export const typeOrmConfig = config;
+
+const typeOrmConfig = new DataSource(config);
+export default typeOrmConfig;

@@ -15,8 +15,8 @@ export class User {
   id: string;
 
   @ApiProperty({ description: 'Name User' })
-  @Column({ nullable: true })
-  nick_name: string;
+  @Column({ nullable: true, name: 'nick_name' })
+  nickName: string;
 
   @ApiProperty({ example: 'test1@example.com' })
   @Column({ nullable: false })

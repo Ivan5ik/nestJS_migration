@@ -25,7 +25,6 @@ export class userTable1689682298391 implements MigrationInterface {
             isNullable: true,
             length: '50',
           },
-
           {
             name: 'email',
             type: 'varchar',
@@ -36,13 +35,14 @@ export class userTable1689682298391 implements MigrationInterface {
           {
             name: 'password',
             type: 'varchar',
-            isNullable: false,
-            length: '50',
+            isNullable: true,
+            length: '255',
           },
           {
             name: 'gender',
             type: 'enum',
             enum: [Gender.MALE, Gender.FEMALE],
+            isNullable: true,
           },
         ],
       }),
