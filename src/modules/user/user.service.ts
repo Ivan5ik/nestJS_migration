@@ -19,7 +19,7 @@ export class UserService {
   async findOne<T>(
     column: keyof T,
     value: string,
-    needChech: boolean = true,
+    needChech = true,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { [column]: value },
