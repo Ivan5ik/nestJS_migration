@@ -15,17 +15,20 @@ export class CreateUserDto {
   @IsString()
   nickName?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  email?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsString()
+  @IsOptional()
   @Length(8, 50, { message: 'Password must contain from 8 symbol to 50' })
-  password: string;
+  password?: string;
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   @IsEnum(Gender)
-  gender: Gender;
+  @IsOptional()
+  gender?: Gender;
 }

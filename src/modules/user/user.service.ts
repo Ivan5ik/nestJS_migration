@@ -1,5 +1,5 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 
@@ -16,8 +16,8 @@ export class UserService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async findOne(
-    column: 'id' | 'email',
+  async findOne<T>(
+    column: keyof T,
     value: string,
     needChech: boolean = true,
   ): Promise<User> {
@@ -32,7 +32,7 @@ export class UserService {
     return user;
   }
 
-  async createUser(body: CreateUserDto): Promise<User> {
+  async create(body: CreateUserDto): Promise<User> {
     if (body.password) {
       const hash = await bcrypt.hash(body.password, 10);
       body.password = hash;
@@ -43,18 +43,16 @@ export class UserService {
     if (!createdUser) {
       throw new NotFoundException('User no create');
     }
+
     return createdUser;
   }
 
-  async loginUser(body: LoginUserDto): Promise<string> {
+  async login(body: LoginUserDto): Promise<string> {
     const { email, password } = body;
+
     const user = await this.findOne('email', email);
 
     const isMatch = await bcrypt.compare(password, user.password);
-
-    console.log('userRRR', user);
-
-    // const { password, ...other } = user;
 
     if (!isMatch) {
       throw new HttpException(
@@ -65,12 +63,12 @@ export class UserService {
         401,
       );
     }
-    const payload = { user }; //todo
-
-    return this.jwtService.sign(payload, {
-      secret:
-        'e3066cf014d01478aa6fa5ee4c65b780480e8a49483e22505375a84ed22e3615',
-      expiresIn: '1h',
-    });
+    return this.jwtService.sign(
+      { user },
+      {
+        secret: process.env.JWT_SECRET_KEY,
+        expiresIn: '1h',
+      },
+    );
   }
 }

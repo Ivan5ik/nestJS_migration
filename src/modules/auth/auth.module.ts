@@ -10,8 +10,7 @@ import { AuthService } from './auth.service';
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret:
-        'e3066cf014d01478aa6fa5ee4c65b780480e8a49483e22505375a84ed22e3615',
+      secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '1h' },
     }),
     forwardRef(() => UserModule),

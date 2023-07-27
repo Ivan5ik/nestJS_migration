@@ -10,11 +10,11 @@ import { config } from './database/typeOrmConfig';
   imports: [
     TypeOrmModule.forRoot(config),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret:
-        'e3066cf014d01478aa6fa5ee4c65b780480e8a49483e22505375a84ed22e3615',
-      signOptions: { expiresIn: '24h' },
-    }),
+    // JwtModule.register({
+    //   secret:
+    //     'e3066cf014d01478aa6fa5ee4c65b780480e8a49483e22505375a84ed22e3615',
+    //   signOptions: { expiresIn: '24h' },
+    // }),
     UserModule,
     AuthModule,
   ],
