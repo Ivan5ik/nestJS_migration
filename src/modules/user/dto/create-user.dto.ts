@@ -7,7 +7,7 @@ import {
   Length,
 } from 'class-validator';
 import { Gender } from '../user.model';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateUserDto {
   @ApiPropertyOptional()
