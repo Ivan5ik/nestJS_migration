@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Inject,
   Injectable,
   UnauthorizedException,
@@ -42,22 +41,18 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   async handleRequest() {
     const token = this.getTokenFromRequest(this.request);
 
-    if (token) {
-      console.log('ID1', token);
-      const {
-        user: { id },
-      } = await this.jwtService.verifyAsync(token);
-      console.log('ID2', id);
-      this.guard(id);
-
-      const entities = await this.userService.getUserById(id);
-      if (!entities) {
-        throw new BadRequestException('Invalid request.');
-      }
-
-      return entities;
-    } else {
+    if (!token) {
       this.guard(false);
     }
+
+    const {
+      user: { id: userId },
+    } = await this.jwtService.verifyAsync(token);
+
+    this.guard(userId);
+
+    const entities = await this.userService.findOne('id', userId);
+
+    return entities;
   }
 }

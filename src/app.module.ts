@@ -2,19 +2,13 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-
+import { config } from './database/typeOrmConfig';
 @Module({
   imports: [
-    TypeOrmModule.forRoot({ synchronize: false }),
+    TypeOrmModule.forRoot(config),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret:
-        'e3066cf014d01478aa6fa5ee4c65b780480e8a49483e22505375a84ed22e3615',
-      signOptions: { expiresIn: '24h' },
-    }),
     UserModule,
     AuthModule,
   ],

@@ -1,6 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
-import { UserDecorator } from 'src/decorators/user.decorator';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { Controller, Post, Body, Query } from '@nestjs/common';
 import { User } from '../user/user.model';
 import { LoginUserDto } from '../user/dto/login.dto';
 import { UserService } from '../user/user.service';
@@ -11,32 +9,41 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthService } from './auth.service';
 
 @ApiTags('Auth Controller')
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly userService: UserService) {}
-
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: User })
-  @ApiOperation({ summary: 'Get user by id' })
-  @Get(':userId')
-  async getUser(@UserDecorator() user: User): Promise<User> {
-    return this.userService.getUserById(user.id);
-  }
+  constructor(
+    private readonly userService: UserService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiOkResponse({ type: User })
-  @ApiOperation({ summary: 'Sign Up new user' })
-  @Post('signUp')
+  @ApiOperation({ summary: 'Sign Up user' })
+  @Post('sign-up')
   async invite(@Body() body: CreateUserDto): Promise<void> {
-    return this.userService.createUser(body);
+    await this.userService.create(body);
+    return;
   }
 
   @ApiOkResponse({ type: User })
-  @ApiOperation({ summary: 'Login registered user' })
-  @Post('login')
+  @ApiOperation({ summary: 'Sign in user' })
+  @Post('sign-in')
   async login(@Body() body: LoginUserDto): Promise<string> {
-    return this.userService.loginUser(body);
+    return this.userService.login(body);
+  }
+
+  @Post('google-sign-in')
+  async loginGoogle(
+    @Query('userTokenId') userTokenId: string,
+  ): Promise<string> {
+    return this.authService.googleSignIn(userTokenId);
+  }
+
+  @Post('spotify-sign-in')
+  async loginSpotify(@Body() body: any): Promise<string> {
+    return this.authService.spotifySignIn(body);
   }
 }
