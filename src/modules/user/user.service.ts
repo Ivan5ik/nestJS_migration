@@ -19,13 +19,13 @@ export class UserService {
   async findOne<T>(
     column: keyof T,
     value: string,
-    needChech = true,
+    needCheck = true,
   ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { [column]: value },
     });
 
-    if (!user && needChech) {
+    if (!user && needCheck) {
       throw new NotFoundException('User not found');
     }
 

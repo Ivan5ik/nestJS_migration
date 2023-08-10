@@ -76,4 +76,27 @@ export class AuthService {
       },
     );
   }
+
+  async spotifySignIn(userData) {
+    let newUser = await this.userService.findOne('email', userData.email);
+
+    if (!newUser) {
+      const payload: CreateUserDto = {
+        nickName: userData.display_name || null,
+        email: userData.email || null,
+        password: null,
+        gender: null,
+      };
+
+      newUser = await this.userService.create(payload);
+    }
+
+    return this.jwtService.sign(
+      { ...newUser },
+      {
+        secret: process.env.JWT_SECRET_KEY,
+        expiresIn: '1h',
+      },
+    );
+  }
 }

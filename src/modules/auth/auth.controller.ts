@@ -41,4 +41,9 @@ export class AuthController {
   ): Promise<string> {
     return this.authService.googleSignIn(userTokenId);
   }
+
+  @Post('spotify-sign-in')
+  async loginSpotify(@Body() body: any): Promise<string> {
+    return this.authService.spotifySignIn(body);
+  }
 }
